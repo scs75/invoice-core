@@ -48,4 +48,9 @@ class InvoiceServiceProvider extends ServiceProvider
             return new InvoiceBuilder();
         });
     }
+
+    public function provides()
+    {
+        return ['Paytech\Invoice\Core\Contract\InvoiceManager'];
+    }
 }
