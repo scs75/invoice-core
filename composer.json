@@ -1,0 +1,14 @@
+{
+    "name": "paytech/invoice-core",
+    "description": "Enterprise invoicing core package",
+    "type": "laravel-plugin",
+    "license": "Proprietary Paytech Inc.",
+    "authors": [
+        {
+            "name": "Csaba Sáray",
+            "email": "csaba.saray@paytech.hu"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
