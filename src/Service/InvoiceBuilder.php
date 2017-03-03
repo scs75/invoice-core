@@ -17,6 +17,8 @@ use Paytech\Invoice\Core\InvoiceTypeEnum;
 use Paytech\Invoice\Core\Model\Invoice;
 use Paytech\Invoice\Core\Model\InvoiceItem as InvoiceItemModel;
 use DB;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 /**
  * Számlázás szolgáltatás
@@ -410,18 +412,19 @@ class InvoiceBuilder implements InvoiceManager
         $invoice->vendor_zip_code = $this->vendor->getVendorZipCode();
         $invoice->vendor_city = $this->vendor->getVendorCity();
         $invoice->vendor_street = $this->vendor->getVendorStreet();
+        $invoice->vendor_country = $this->vendor->getVendorCountry();
         $invoice->vendor_tax_number = $this->vendor->getVendorTaxNumber();
         $invoice->vendor_eu_tax_number = $this->vendor->getVendorEuTaxNumber();
         $invoice->vendor_bank_account = $this->vendor->getVendorBankAccount();
         $invoice->vendor_email = $this->vendor->getVendorEmail();
         $invoice->vendor_phone = $this->vendor->getVendorPhone();
-        $invoice->vendor_country = $this->vendor->getVendorCountry();
         $invoice->vendor_logo = $this->vendor->getVendorLogo();
 
         $invoice->customer_name = $this->customer->getCustomerName();
         $invoice->customer_zip_code = $this->customer->getCustomerZipCode();
         $invoice->customer_city = $this->customer->getCustomerCity();
         $invoice->customer_street = $this->customer->getCustomerStreet();
+        $invoice->customer_country = $this->customer->getCustomerCountry();
         $invoice->customer_tax_number = $this->customer->getCustomerTaxNumber();
         $invoice->customer_eu_tax_number = $this->customer->getCustomerEuTaxNumber();
 
@@ -488,8 +491,21 @@ class InvoiceBuilder implements InvoiceManager
     {
         $orig_locale = trans()->getLocale();
         trans()->setLocale($invoice->language);
+
         $pdf = \PDF::loadView('invoice::'.$invoice->template.'.index', compact('invoice'));
-        trans()->setLocale($orig_locale);
         $pdf->save(storage_path('app/invoice/'.$invoice->serial_number.'.pdf'));
+
+/*        $html = view('invoice::'.$invoice->template.'.index', compact('invoice'))->render();
+        $options = new Options();
+        $options->set('isPhpEnabled', false);
+        $dompdf = new Dompdf($options);
+        $dompdf->render();
+        $output = $dompdf->output();
+        file_put_contents(storage_path('app/invoice/'.$invoice->serial_number.'.pdf'), $output);*/
+
+
+        trans()->setLocale($orig_locale);
+
+
     }
 }

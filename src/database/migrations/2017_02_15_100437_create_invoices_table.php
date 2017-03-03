@@ -37,18 +37,19 @@ class CreateInvoicesTable extends Migration
             $table->string('vendor_zip_code', 10)->comment('kiállító irányítószám');
             $table->string('vendor_city', 64)->comment('kiállító város');
             $table->string('vendor_street', 100)->comment('kiállító utca');
+            $table->string('vendor_country', 2)->comment('kiállító ország');
             $table->string('vendor_tax_number', 20)->comment('kiállító adószám');
             $table->string('vendor_eu_tax_number', 20)->comment('kiállító közösségi adószám');
             $table->string('vendor_bank_account', 32)->comment('kiállító bankszámlaszáma');
             $table->string('vendor_email', 32)->comment('kiállító email címe');
             $table->string('vendor_phone', 32)->comment('kiállító telefonszáma');
-            $table->string('vendor_country', 2)->comment('kiállító ország');
             $table->string('vendor_logo', 128)->comment('kiállító logo');
 
             $table->string('customer_name', 100)->comment('vevő neve');
             $table->string('customer_zip_code', 10)->comment('vevő irányítószám');
             $table->string('customer_city', 64)->comment('vevő város');
             $table->string('customer_street', 100)->comment('vevő utca');
+            $table->string('customer_country', 2)->comment('vevő ország');
             $table->string('customer_tax_number', 20)->comment('vevő adószám');
             $table->string('customer_eu_tax_number', 20)->comment('vevő közösségi adószám');
 

@@ -45,6 +45,13 @@ interface InvoiceCustomer
      *
      * @return string
      */
+    public function getCustomerCountry();
+
+    /**
+     *
+     *
+     * @return string
+     */
     public function getCustomerTaxNumber();
 
     /**

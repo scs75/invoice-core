@@ -5,12 +5,13 @@ namespace Paytech\Invoice\Core;
 use Illuminate\Support\ServiceProvider;
 use Paytech\Invoice\Core\Model\Invoice;
 use Paytech\Invoice\Core\Service\InvoiceBuilder;
+use Paytech\Invoice\Core\Contract\InvoiceManager;
 
 /**
  * Számlázás szolgáltató
  * publikálás:
  * php artisan vendor:publish --provider="Paytech\Invoice\Core\InvoiceServiceProvider" --tag=config --force
- *
+ * php artisan vendor:publish --provider="Barryvdh\DomPDF\ServiceProvider"
  * Függőség: php 7.0, laravel 5.3, laravel-dompdf
  * - A dompdf fonts könyvtárába kell másolni a DejaVu Condensed fontokat
  * @package Paytech\Invoice\Core
@@ -44,13 +45,13 @@ class InvoiceServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('Paytech\Invoice\Core\Contract\InvoiceManager', function ($app) {
+        $this->app->singleton(InvoiceManager::class, function ($app) {
             return new InvoiceBuilder();
         });
     }
 
     public function provides()
     {
-        return ['Paytech\Invoice\Core\Contract\InvoiceManager'];
+        return [InvoiceManager::class];
     }
 }
