@@ -90,7 +90,7 @@ class CreateInvoicesTable extends Migration
             $table->integer('quantity')->comment('mennyiség');
             $table->string('unit', 32)->comment('egység');
             $table->string('vat_name', 128)->comment('áfa neve');
-            $table->decimal('vat_multiplier', 5, 2)->comment('áfa szorzó');
+            $table->decimal('vat_multiplier', 5, 2)->nullable()->comment('áfa szorzó');
             $table->decimal('gross_unit_price', 12, 2)->comment('bruttó egységár');
             $table->decimal('net_price', 12, 2)->comment('nettó ár');
             $table->decimal('gross_price', 12, 2)->comment('bruttó ár');

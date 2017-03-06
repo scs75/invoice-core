@@ -129,7 +129,7 @@ $brand_color = '#3cc9f5';
                 <td width='20%' align="right" class="amount">{{ $invoice->moneyFormat('total_net_amount') }}</td>
             </tr>
             @if($invoice->hasVatSummary())
-                @foreach($invoice->items()->select(DB::raw('SUM(vat_amount) as vat_amount, vat_name'))->groupBy('vat_name')->get() as $vat_item)
+                @foreach($invoice->items()->select(DB::raw('SUM(vat_amount) as vat_amount, vat_name'))->groupBy('vat_name')->orderBy('vat_name')->get() as $vat_item)
                     <tr>
                         <td valign="bottom" align="right" class="title">{{ mb_strtoupper($vat_item->vat_name.' '.trans('invoice::prp.items-vat_name')) }}:</td>
                         <td align="right" class="amount">
