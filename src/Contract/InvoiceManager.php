@@ -4,6 +4,7 @@ namespace Paytech\Invoice\Core\Contract;
 
 use Carbon\Carbon;
 use Paytech\Invoice\Core\Model\Invoice;
+use Paytech\Invoice\Core\Model\Vat;
 use Paytech\Invoice\Core\PaymentModeEnum;
 
 /**
@@ -59,9 +60,10 @@ interface InvoiceManager
      * @param InvoiceItem $item
      * @param float $net_unit_price
      * @param int $quantity
+     * @param Vat|null $vat
      * @return InvoiceManager
      */
-    public function item(InvoiceItem $item, float $net_unit_price, int $quantity);
+    public function item(InvoiceItem $item, float $net_unit_price, int $quantity, Vat $vat = null);
 
     /**
      * Egyedi megjegyzés (remark_custom)

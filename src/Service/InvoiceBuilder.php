@@ -19,6 +19,7 @@ use Paytech\Invoice\Core\Model\InvoiceItem as InvoiceItemModel;
 use DB;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use Paytech\Invoice\Core\Model\Vat;
 
 /**
  * Számlázás szolgáltatás
@@ -145,13 +146,14 @@ class InvoiceBuilder implements InvoiceManager
      * @param InvoiceItem $item
      * @param float $net_unit_price
      * @param int $quantity
+     * @param Vat|null $vat
      * @return InvoiceManager
      */
-    public function item(InvoiceItem $item, float $net_unit_price, int $quantity)
+    public function item(InvoiceItem $item, float $net_unit_price, int $quantity, Vat $vat = null)
     {
-        $multiplier = $item->getInvoiceVat()->multiplier;
+        $multiplier = $vat->multiplier ?? $item->getInvoiceVat()->multiplier;
         $gross_unit_price = $this->calculateGross($net_unit_price, $multiplier);
-        $net_price = $net_unit_price * $quantity;
+        $net_price = round($net_unit_price * $quantity, 2);
         $gross_price = $this->calculateGross($net_price, $multiplier);
         $vat_amount = $gross_price - $net_price;
         $this->items[] = new InvoiceItemModel([
