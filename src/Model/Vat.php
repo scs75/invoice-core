@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Áfa
  *
- * @package App\Models
+ * @package Paytech\Invoice\Core\Model
  * @author Sáray Csaba <csaba.saray@paytech.hu>
  * @licence http://paytech.hu All rights reserved
  */

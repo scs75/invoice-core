@@ -20,6 +20,7 @@ use DB;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use Paytech\Invoice\Core\Model\Vat;
+use Paytech\Invoice\Core\PaymentModeEnum;
 
 /**
  * Számlázás szolgáltatás
@@ -284,7 +285,7 @@ class InvoiceBuilder implements InvoiceManager
         $this->supply_d = null;
         $this->payment_mode = null;
         $this->deadline_d = null;
-        $this->remark_custom = null;
+        $this->remark_custom = '';
     }
 
     /**
@@ -431,9 +432,9 @@ class InvoiceBuilder implements InvoiceManager
         $invoice->customer_eu_tax_number = $this->customer->getCustomerEuTaxNumber();
 
         $invoice->release_d = Carbon::today();
-        $invoice->supply_d = $this->supply_d;
+        $invoice->supply_d = $this->supply_d ?? Carbon::today();
         $invoice->deadline_d = $this->deadline_d;
-        $invoice->payment_mode = $this->payment_mode;
+        $invoice->payment_mode = $this->payment_mode ?? PaymentModeEnum::CASH;
         $invoice->is_paid = false;
         $invoice->payment_d = null;
 

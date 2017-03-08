@@ -6,13 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 use Paytech\Invoice\Core\MoneyFormatTrait;
 
 /**
- * Számla tétel
+ * Számla áfa bontás tétel
+ * Egy group by-os nézettáblára épül.
  *
  * @package Paytech\Invoice\Core\Model
  * @author Sáray Csaba <csaba.saray@paytech.hu>
  * @licence http://paytech.hu All rights reserved
  */
-class InvoiceItem extends Model
+class InvoiceVatItem extends Model
 {
     /*
     |--------------------------------------------------------------------------
@@ -30,15 +31,7 @@ class InvoiceItem extends Model
     | Laravel propertyk: Tömeges értékadás ($fillable vagy $guarded), láthatóság ($hidden), típusok ($dates), stb
     |--------------------------------------------------------------------------
     */
-    protected $fillable = [
-        'product_id', 'vat_id', 'description', 'net_unit_price', 'quantity', 'unit', 'vat_name', 'vat_multiplier',
-        'gross_unit_price', 'net_price', 'gross_price', 'vat_amount'
-    ];
-    protected $dates = [
-    ];
-    protected $casts = [
-    ];
-    protected $title_field = 'id';
+    protected $title_field = 'vat_name';
 
     /*
     |--------------------------------------------------------------------------
@@ -54,15 +47,15 @@ class InvoiceItem extends Model
     {
         return $this->belongsTo(Invoice::class);
     }
-    public function vat()
-    {
-        return $this->belongsTo(Vat::class);
-    }
     /*
     |--------------------------------------------------------------------------
     | Accesorok és Mutátorok (form accessorok is)
     |--------------------------------------------------------------------------
     */
+    public function getVatAmountAttribute($value)
+    {
+        return ($this->invoice->currency == 'huf') ? round($value) : $value;
+    }
     /*
     |--------------------------------------------------------------------------
     | Lokális scope-ok

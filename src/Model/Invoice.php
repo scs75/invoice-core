@@ -7,11 +7,12 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 use Collective\Html\Eloquent\FormAccessible;
+use Paytech\Invoice\Core\MoneyFormatTrait;
 
 /**
  * Számla
  *
- * @package App\Models
+ * @package Paytech\Invoice\Core\Model
  * @author Sáray Csaba <csaba.saray@paytech.hu>
  * @licence http://paytech.hu All rights reserved
  */
@@ -27,6 +28,7 @@ class Invoice extends Model
     | Trait-ek
     |--------------------------------------------------------------------------
     */
+    use MoneyFormatTrait;
     /*
     |--------------------------------------------------------------------------
     | Laravel propertyk: Tömeges értékadás ($fillable vagy $guarded), láthatóság ($hidden), típusok ($dates), stb
@@ -70,6 +72,10 @@ class Invoice extends Model
     {
         return $this->hasMany(InvoiceItem::class);
     }
+    public function vatItems()
+    {
+        return $this->hasMany(InvoiceVatItem::class)->orderBy('vat_multiplier');
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -101,15 +107,18 @@ class Invoice extends Model
 
     public function calculateTotals()
     {
-        $row = InvoiceItem::where('invoice_id', $this->id)
-            ->select(
-                DB::raw('SUM(net_price) as total_net_amount'),
-                DB::raw('SUM(vat_amount) as total_vat_amount'),
-                DB::raw('SUM(gross_price) as total_gross_amount')
-            )->first();
-        $this->total_net_amount = $row->total_net_amount;
-        $this->total_vat_amount = $row->total_vat_amount;
-        $this->total_gross_amount = $row->total_gross_amount;
+        $total_net_amount = $this->items()->sum('net_price');
+        $total_vat_amount = 0;
+        foreach($this->vatItems as $vat_item) {
+            $total_vat_amount += $vat_item->vat_amount;// a mutator kerekített értéket ad vissza huf esetén
+        }
+        if($this->currency == 'huf') {
+            $this->total_net_amount = round($total_net_amount);
+        } else {
+            $this->total_net_amount = $total_net_amount;
+        }
+        $this->total_vat_amount = $total_vat_amount;
+        $this->total_gross_amount = $this->total_net_amount + $total_vat_amount;
         $this->save();
     }
 
@@ -120,14 +129,7 @@ class Invoice extends Model
 
     public function moneyFormat(string $field)
     {
-        $lang = config('invoice.languages.'.$this->language);
-        $amount = number_format($this->$field,
-            $lang['decimals'],
-            $lang['dec_point'],
-            $lang['thousands_sep']
-        );
-        $amount = $amount.' '.config('invoice.currencies.'.$this->currency.'.code');
-        return $amount;
+        return $this->formatCurrency($this->$field, $this);
     }
 
     public function hasVatSummary()

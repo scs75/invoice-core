@@ -41,7 +41,7 @@ class CreateInvoicesTable extends Migration
             $table->string('vendor_tax_number', 20)->comment('kiállító adószám');
             $table->string('vendor_eu_tax_number', 20)->comment('kiállító közösségi adószám');
             $table->string('vendor_bank_account', 32)->comment('kiállító bankszámlaszáma');
-            $table->string('vendor_email', 32)->comment('kiállító email címe');
+            $table->string('vendor_email', 64)->comment('kiállító email címe');
             $table->string('vendor_phone', 32)->comment('kiállító telefonszáma');
             $table->string('vendor_logo', 128)->comment('kiállító logo');
 
@@ -99,6 +99,19 @@ class CreateInvoicesTable extends Migration
 
             $table->foreign('invoice_id')->references('id')->on('invoices');
         });
+
+        $create_view = <<<EOD
+CREATE OR REPLACE VIEW invoice_vat_items AS
+SELECT
+    invoice_id,
+    vat_name,
+    vat_multiplier,
+    SUM(vat_amount) as vat_amount
+FROM invoice_items
+GROUP BY invoice_id, vat_name, vat_multiplier
+ORDER BY invoice_id, vat_multiplier
+EOD;
+        DB::statement( $create_view );
     }
 
     /**
@@ -108,6 +121,7 @@ class CreateInvoicesTable extends Migration
      */
     public function down()
     {
+        DB::statement( 'DROP VIEW IF EXISTS order_item_exps' );
         Schema::dropIfExists('invoice_items');
         Schema::dropIfExists('invoices');
         Schema::dropIfExists('vats');
